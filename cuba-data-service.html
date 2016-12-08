@@ -1,0 +1,46 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="cuba-data-loading-behavior.html">
+
+<!--
+The `cuba-data-service` element provides an ability to load data from service exposed in REST API.
+-->
+
+<dom-module id="cuba-data-service">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'cuba-data-service',
+
+      behaviors: [CubaDataLoadingBehavior],
+
+      properties: {
+        serviceName: String,
+        method: String,
+        params: {
+          type: Object
+        },
+        handleAs: {
+          type: String,
+          value: 'json'
+        }
+      },
+
+      observers: ['_reload(serviceName, method, handleAs, auto)'],
+
+      _load: function() {
+        var ajaxSettings = {
+          dataType: this.handleAs
+        };
+        return cubaApp.invokeService(this.serviceName, this.method, this.params, ajaxSettings);
+      }
+    });
+  </script>
+</dom-module>

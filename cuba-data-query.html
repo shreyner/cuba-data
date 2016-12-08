@@ -1,0 +1,55 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="cuba-data-loading-behavior.html">
+<!--
+The `cuba-data-query` element provides an ability to load list of entities using predefined query.
+-->
+
+<dom-module id="cuba-data-query">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'cuba-data-query',
+
+      behaviors: [CubaDataLoadingBehavior],
+
+      properties: {
+        entityName: String,
+        queryName: String,
+        /**
+         * Query params
+         */
+        params: {
+          type: Object
+        }
+      },
+
+      observers: ['_reload(entityName, queryName, params.*, auto)'],
+
+      remove: function(entity) {
+        return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {
+          if (!this.data || !Array.isArray(this.data)) {
+            return;
+          }
+          for (let i = 0; i < this.data.length; i++) {
+            if (this.data[i].id === entity.id) {
+              this.splice("data", i, 1);
+            }
+          }
+        }.bind(this));
+      },
+
+      _load: function() {
+        return cubaApp.query(this.entityName, this.queryName, this.params);
+      }
+
+    });
+  </script>
+</dom-module>

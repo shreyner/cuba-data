@@ -1,0 +1,44 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="cuba-data-loading-behavior.html">
+
+<!--
+The `cuba-data-entity` element provides an ability to load specific entity by Id.
+-->
+<dom-module id="cuba-data-entity">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'cuba-data-entity',
+
+      behaviors: [CubaDataLoadingBehavior],
+
+      properties: {
+        entityName: String,
+        entityId: String,
+        /**
+         * Name of the view which is used for loading entities
+         */
+        view: {
+          type: String,
+          value: null
+        }
+      },
+
+      observers: ['_reload(entityName, entityId, view, auto)'],
+
+      _load: function() {
+        if (this.entityName == null || this.entityId == null) {
+          return;
+        }
+        return cubaApp.loadEntity(this.entityName, this.entityId, {view: this.view});
+      }
+
+    });
+  </script>
+</dom-module>

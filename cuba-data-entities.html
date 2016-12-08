@@ -1,0 +1,93 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="cuba-data-loading-behavior.html">
+
+<!--
+The `cuba-data-entities` element provides an ability to load list of entities.
+
+-->
+
+<dom-module id="cuba-data-entities">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'cuba-data-entities',
+
+      behaviors: [CubaDataLoadingBehavior],
+
+      properties: {
+        entityName: String,
+        /**
+         * Name of the view which is used for loading entities
+         */
+        view: {
+          type: String,
+          value: null
+        },
+        /**
+         * Name of the field to be sorted by. If the name is preceeding by the '+' character,
+         * then the sort order is ascending, if by the '-' character then descending.
+         * If there is no special character before the property name, then ascending sort will be used.
+         */
+        sort: {
+          type: String,
+          value: null
+        },
+        /**
+         * Number of extracted entities
+         */
+        limit: {
+          type: String,
+          value: null
+        },
+        /**
+         * Position of the first result to retrieve
+         */
+        offset: {
+          type: String,
+          value: null
+        }
+      },
+
+      observers: ['_reload(entityName, view, sort, limit, offset, auto)'],
+
+      /**
+       * Deletes entity and removes it from `data` collection
+       * @paprm {Object} must contain `id` and `_entityName` fields
+       * @return jQuery promise
+       */
+      remove: function(entity) {
+        return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {
+          if (!this.data || !Array.isArray(this.data)) {
+            return;
+          }
+          for (let i = 0; i < this.data.length; i++) {
+            if (this.data[i].id === entity.id) {
+              this.splice("data", i, 1);
+            }
+          }
+        }.bind(this));
+      },
+
+      _load: function() {
+        return cubaApp.loadEntities(this.entityName, this._getOptions());
+      },
+
+      _getOptions: function() {
+        var opts = {};
+        if (this.view) opts.view = this.view;
+        if (this.sort) opts.sort = this.sort;
+        if (this.limit) opts.limit = this.limit;
+        if (this.offset) opts.offset = this.offset;
+        return opts;
+      }
+    });
+  </script>
+</dom-module>
