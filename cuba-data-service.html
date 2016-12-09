@@ -33,7 +33,7 @@ The `cuba-data-service` element provides an ability to load data from service ex
         }
       },
 
-      observers: ['_reload(serviceName, method, handleAs, auto)'],
+      observers: ['_reload(serviceName, method, handleAs, params.*, auto)'],
 
       _load: function() {
         var ajaxSettings = {
