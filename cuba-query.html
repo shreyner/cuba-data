@@ -1,10 +1,11 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="cuba-data-loading-behavior.html">
 <!--
-The `cuba-data-query` element provides an ability to load list of entities using predefined query.
+The `cuba-query` element provides an ability to load list of entities using predefined query.
+See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
 -->
 
-<dom-module id="cuba-data-query">
+<dom-module id="cuba-query">
   <template>
     <style>
       :host {
@@ -16,11 +17,14 @@ The `cuba-data-query` element provides an ability to load list of entities using
   <script>
     Polymer({
 
-      is: 'cuba-data-query',
+      is: 'cuba-query',
 
       behaviors: [CubaDataLoadingBehavior],
 
       properties: {
+        /**
+         * Entity name as specified in domain model class via `@Entity` annotation e.g. sec$User
+         */
         entityName: String,
         queryName: String,
         /**
@@ -31,7 +35,7 @@ The `cuba-data-query` element provides an ability to load list of entities using
         }
       },
 
-      observers: ['_reload(entityName, queryName, params.*, auto)'],
+      observers: ['_optionsChanged(entityName, queryName, params.*, auto)'],
 
       remove: function(entity) {
         return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {

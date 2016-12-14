@@ -2,10 +2,11 @@
 <link rel="import" href="cuba-data-loading-behavior.html">
 
 <!--
-The `cuba-data-service` element provides an ability to load data from service exposed in REST API.
+The `cuba-service` element provides an ability to load data from [middleware service](https://doc.cuba-platform.com/manual-latest/services.html).
+The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest_api_v2_services_config.html) in REST API.
 -->
 
-<dom-module id="cuba-data-service">
+<dom-module id="cuba-service">
   <template>
     <style>
       :host {
@@ -17,7 +18,7 @@ The `cuba-data-service` element provides an ability to load data from service ex
   <script>
     Polymer({
 
-      is: 'cuba-data-service',
+      is: 'cuba-service',
 
       behaviors: [CubaDataLoadingBehavior],
 
@@ -33,7 +34,7 @@ The `cuba-data-service` element provides an ability to load data from service ex
         }
       },
 
-      observers: ['_reload(serviceName, method, handleAs, params.*, auto)'],
+      observers: ['_optionsChanged(serviceName, method, handleAs, params.*, auto)'],
 
       _load: function() {
         var ajaxSettings = {

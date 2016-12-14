@@ -2,11 +2,10 @@
 <link rel="import" href="cuba-data-loading-behavior.html">
 
 <!--
-The `cuba-data-entities` element provides an ability to load list of entities.
-
+The `cuba-entities` element provides an ability to load list of entities.
 -->
 
-<dom-module id="cuba-data-entities">
+<dom-module id="cuba-entities">
   <template>
     <style>
       :host {
@@ -18,14 +17,17 @@ The `cuba-data-entities` element provides an ability to load list of entities.
   <script>
     Polymer({
 
-      is: 'cuba-data-entities',
+      is: 'cuba-entities',
 
       behaviors: [CubaDataLoadingBehavior],
 
       properties: {
+        /**
+         * Entity name as specified in domain model class via `@Entity` annotation e.g. sec$User
+         */
         entityName: String,
         /**
-         * Name of the view which is used for loading entities
+         * Name of the view which is used for loading entities.
          */
         view: {
           type: String,
@@ -41,14 +43,14 @@ The `cuba-data-entities` element provides an ability to load list of entities.
           value: null
         },
         /**
-         * Number of extracted entities
+         * Number of extracted entities.
          */
         limit: {
           type: String,
           value: null
         },
         /**
-         * Position of the first result to retrieve
+         * Position of the first result to retrieve.
          */
         offset: {
           type: String,
@@ -56,10 +58,10 @@ The `cuba-data-entities` element provides an ability to load list of entities.
         }
       },
 
-      observers: ['_reload(entityName, view, sort, limit, offset, auto)'],
+      observers: ['_optionsChanged(entityName, view, sort, limit, offset, auto)'],
 
       /**
-       * Deletes entity and removes it from `data` collection
+       * Deletes entity and removes it from `data` collection.
        * @paprm {Object} must contain `id` and `_entityName` fields
        * @return jQuery promise
        */
