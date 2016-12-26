@@ -28,6 +28,9 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
         params: {
           type: Object
         },
+        /**
+         * Type of data format expected in response. Currently supported: `text`, `json`, `blob`.
+         */
         handleAs: {
           type: String,
           value: 'json'
@@ -37,10 +40,9 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
       observers: ['_optionsChanged(serviceName, method, handleAs, params.*, auto)'],
 
       _load: function() {
-        var ajaxSettings = {
-          dataType: this.handleAs
-        };
-        return cubaApp.invokeService(this.serviceName, this.method, this.params, ajaxSettings);
+        return cubaApp.invokeService(this.serviceName, this.method, this.params, {
+          handleAs: this.handleAs
+        });
       }
     });
   </script>

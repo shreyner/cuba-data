@@ -63,7 +63,7 @@ The `cuba-entities` element provides an ability to load list of entities.
       /**
        * Deletes entity and removes it from `data` collection.
        * @paprm {Object} must contain `id` and `_entityName` fields
-       * @return jQuery promise
+       * @return Promise
        */
       remove: function(entity) {
         return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {
