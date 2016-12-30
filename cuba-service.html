@@ -26,7 +26,10 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
         serviceName: String,
         method: String,
         params: {
-          type: Object
+          type: Object,
+          value: function() {
+            return {}
+          }
         },
         /**
          * Type of data format expected in response. Currently supported: `text`, `json`, `blob`.
