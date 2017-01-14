@@ -70,12 +70,12 @@ The `cuba-entities` element provides an ability to load list of entities.
        * @paprm {Object} must contain `id` and `_entityName` fields
        * @return {Promise}
        */
-      remove: function(entity) {
-        return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {
+      remove: function (entity) {
+        return cubaApp.deleteEntity(entity._entityName, entity.id).then(function () {
           if (!this.data || !Array.isArray(this.data)) {
             return;
           }
-          for (let i = 0; i < this.data.length; i++) {
+          for (var i = 0; i < this.data.length; i++) {
             if (this.data[i].id === entity.id) {
               this.splice("data", i, 1);
             }
@@ -83,12 +83,12 @@ The `cuba-entities` element provides an ability to load list of entities.
         }.bind(this));
       },
 
-      loadMore: function() {
+      loadMore: function () {
         if (!this.data) {
-          throw new Error ('Data is not loaded yet');
+          throw new Error('Data is not loaded yet');
         }
         if (!this.limit) {
-          throw new Error ('Limit is not specified');
+          throw new Error('Limit is not specified');
         }
 
         if (!this._loadMoreOffset) {
@@ -98,18 +98,28 @@ The `cuba-entities` element provides an ability to load list of entities.
         }
         var options = this._getOptions();
         options.offset = this._loadMoreOffset;
-        return cubaApp.loadEntities(this.entityName, options).then(function(data) {
-          data.forEach(function(v) {
-            this.push('data', v);
-          }.bind(this));
-        }.bind(this));
+        this._setLoading(true);
+
+        return cubaApp.loadEntities(this.entityName, options).then(
+          function (data) {
+            data.forEach(function (v) {
+              this.push('data', v);
+            }.bind(this));
+            this._setLoading(false);
+          }.bind(this),
+          function() {
+            this._setLoading(false);
+            this.fire("cuba-data-loading-error");
+          }.bind(this)
+        );
       },
 
-      _load: function() {
+      _load: function () {
+        this._loadMoreOffset = null;
         return cubaApp.loadEntities(this.entityName, this._getOptions());
       },
 
-      _getOptions: function() {
+      _getOptions: function () {
         var opts = {};
         if (this.view) opts.view = this.view;
         if (this.sort) opts.sort = this.sort;
