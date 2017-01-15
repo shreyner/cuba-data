@@ -26,6 +26,7 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
          * Entity name as specified in domain model class via `@Entity` annotation e.g. sec$User
          */
         entityName: String,
+
         queryName: String,
         /**
          * Query params
@@ -35,17 +36,36 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
           value: function() {
             return {}
           }
+        },
+
+        provideCount: {
+          type: Boolean,
+          value: false
+        },
+
+        count: {
+          type: Number,
+          notify: true,
+          readOnly: true
+        },
+
+        _loadMoreOffset: {
+          type: Number,
+          value: null
         }
       },
 
-      observers: ['_optionsChanged(entityName, queryName, params.*, auto)'],
+      observers: [
+        '_optionsChanged(entityName, queryName, params.*, auto)',
+        '_countOptionsChanged(entityName, queryName, params.*, auto, provideCount)'
+      ],
 
       remove: function(entity) {
         return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {
           if (!this.data || !Array.isArray(this.data)) {
             return;
           }
-          for (let i = 0; i < this.data.length; i++) {
+          for (var i = 0; i < this.data.length; i++) {
             if (this.data[i].id === entity.id) {
               this.splice("data", i, 1);
             }
@@ -53,8 +73,55 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
         }.bind(this));
       },
 
+      loadMore: function () {
+        if (!this.data) {
+          throw new Error('Data is not loaded yet');
+        }
+        if (!this.params.limit) {
+          throw new Error('Limit is not specified');
+        }
+
+        if (!this._loadMoreOffset) {
+          this._loadMoreOffset = (this.offset ? parseInt(this.offset) : 0) + parseInt(this.params.limit);
+        } else {
+          this._loadMoreOffset += parseInt(this.params.limit);
+        }
+        var params = JSON.parse(JSON.stringify(this.params)); //todo
+        params.offset = this._loadMoreOffset;
+        this._setLoading(true);
+
+        return cubaApp.query(this.entityName, this.queryName, params).then(
+          function (data) {
+            data.forEach(function (v) {
+              this.push('data', v);
+            }.bind(this));
+            this._setLoading(false);
+          }.bind(this),
+          function() {
+            this._setLoading(false);
+            this.fire("cuba-data-loading-error");
+          }.bind(this)
+        );
+      },
+
+      loadCount: function() {
+        var loadCountPromise = cubaApp.queryCount(this.entityName, this.queryName, this.params);
+        loadCountPromise.then(function (count) {
+          this._setCount(parseInt(count));
+        }.bind(this));
+        return loadCountPromise;
+      },
+
+
       _load: function() {
+        this._loadMoreOffset = null;
         return cubaApp.query(this.entityName, this.queryName, this.params);
+      },
+
+      _countOptionsChanged: function(entityName, queryName, params, auto, provideCount) {
+        if (auto && provideCount) {
+          this.loadCount();
+        }
       }
 
     });

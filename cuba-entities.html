@@ -57,13 +57,27 @@ The `cuba-entities` element provides an ability to load list of entities.
           value: null
         },
 
+        provideCount: {
+          type: Boolean,
+          value: false
+        },
+
+        count: {
+          type: Number,
+          notify: true,
+          readOnly: true
+        },
+
         _loadMoreOffset: {
           type: Number,
           value: null
         }
       },
 
-      observers: ['_optionsChanged(entityName, view, sort, offset, auto)'],
+      observers: [
+        '_optionsChanged(entityName, view, sort, limit, offset, auto)',
+        '_countOptionsChanged(entityName, auto, provideCount)'
+      ],
 
       /**
        * Deletes entity and removes it from `data` collection.
@@ -114,6 +128,14 @@ The `cuba-entities` element provides an ability to load list of entities.
         );
       },
 
+      loadCount: function() {
+        var loadCountPromise = cubaApp.queryCount(this.entityName, 'all', null);
+        loadCountPromise.then(function (count) {
+          this._setCount(parseInt(count));
+        }.bind(this));
+        return loadCountPromise;
+      },
+
       _load: function () {
         this._loadMoreOffset = null;
         return cubaApp.loadEntities(this.entityName, this._getOptions());
@@ -126,6 +148,12 @@ The `cuba-entities` element provides an ability to load list of entities.
         if (this.limit) opts.limit = this.limit;
         if (this.offset) opts.offset = this.offset;
         return opts;
+      },
+
+      _countOptionsChanged: function(entityName, auto, provideCount) {
+        if (auto && provideCount) {
+          this.loadCount();
+        }
       }
     });
   </script>
