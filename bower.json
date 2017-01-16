@@ -1,10 +1,10 @@
 {
   "name": "cuba-data",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "main": "cuba-data.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.7.0",
-    "cuba-app": "0.0.2"
+    "cuba-app": "cuba-elements/cuba-app#^0.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
