@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../cuba-app/cuba-app-aware-behavior.html">
 <link rel="import" href="cuba-data-loading-behavior.html">
 <!--
 The `cuba-query` element provides an ability to load list of entities using predefined query.
@@ -19,7 +20,7 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
 
       is: 'cuba-query',
 
-      behaviors: [CubaDataLoadingBehavior],
+      behaviors: [CubaAppAwareBehavior, CubaDataLoadingBehavior],
 
       properties: {
         /**
@@ -56,12 +57,12 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
       },
 
       observers: [
-        '_optionsChanged(entityName, queryName, params.*, auto)',
-        '_countOptionsChanged(entityName, queryName, params.*, auto, provideCount)'
+        '_optionsChanged(app, entityName, queryName, params.*, auto)',
+        '_countOptionsChanged(app, entityName, queryName, params.*, auto, provideCount)'
       ],
 
       remove: function(entity) {
-        return cubaApp.deleteEntity(entity._entityName, entity.id).then(function() {
+        return this.app.deleteEntity(entity._entityName, entity.id).then(function() {
           if (!this.data || !Array.isArray(this.data)) {
             return;
           }
@@ -90,7 +91,7 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
         params.offset = this._loadMoreOffset;
         this._setLoading(true);
 
-        return cubaApp.query(this.entityName, this.queryName, params).then(
+        return this.app.query(this.entityName, this.queryName, params).then(
           function (data) {
             data.forEach(function (v) {
               this.push('data', v);
@@ -105,7 +106,7 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
       },
 
       loadCount: function() {
-        var loadCountPromise = cubaApp.queryCount(this.entityName, this.queryName, this.params);
+        var loadCountPromise = this.app.queryCount(this.entityName, this.queryName, this.params);
         loadCountPromise.then(function (count) {
           this._setCount(parseInt(count));
         }.bind(this));
@@ -115,7 +116,7 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
 
       _load: function() {
         this._loadMoreOffset = null;
-        return cubaApp.query(this.entityName, this.queryName, this.params);
+        return this.app.query(this.entityName, this.queryName, this.params);
       },
 
       _countOptionsChanged: function(entityName, queryName, params, auto, provideCount) {

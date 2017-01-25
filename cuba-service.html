@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../cuba-app/cuba-app-aware-behavior.html">
 <link rel="import" href="cuba-data-loading-behavior.html">
 
 <!--
@@ -20,7 +21,7 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
 
       is: 'cuba-service',
 
-      behaviors: [CubaDataLoadingBehavior],
+      behaviors: [CubaAppAwareBehavior, CubaDataLoadingBehavior],
 
       properties: {
         serviceName: String,
@@ -40,10 +41,10 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
         }
       },
 
-      observers: ['_optionsChanged(serviceName, method, handleAs, params.*, auto)'],
+      observers: ['_optionsChanged(app, serviceName, method, handleAs, params.*, auto)'],
 
       _load: function() {
-        return cubaApp.invokeService(this.serviceName, this.method, this.params, {
+        return this.app.invokeService(this.serviceName, this.method, this.params, {
           handleAs: this.handleAs
         });
       }

@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../cuba-app/cuba-app-aware-behavior.html">
 <link rel="import" href="cuba-data-loading-behavior.html">
 
 <!--
@@ -19,7 +20,7 @@ The `cuba-entities` element provides an ability to load list of entities.
 
       is: 'cuba-entities',
 
-      behaviors: [CubaDataLoadingBehavior],
+      behaviors: [CubaAppAwareBehavior, CubaDataLoadingBehavior],
 
       properties: {
         /**
@@ -75,8 +76,8 @@ The `cuba-entities` element provides an ability to load list of entities.
       },
 
       observers: [
-        '_optionsChanged(entityName, view, sort, limit, offset, auto)',
-        '_countOptionsChanged(entityName, auto, provideCount)'
+        '_optionsChanged(app, entityName, view, sort, limit, offset, auto)',
+        '_countOptionsChanged(app, entityName, auto, provideCount)'
       ],
 
       /**
@@ -85,7 +86,7 @@ The `cuba-entities` element provides an ability to load list of entities.
        * @return {Promise}
        */
       remove: function (entity) {
-        return cubaApp.deleteEntity(entity._entityName, entity.id).then(function () {
+        return this.app.deleteEntity(entity._entityName, entity.id).then(function () {
           if (!this.data || !Array.isArray(this.data)) {
             return;
           }
@@ -114,7 +115,7 @@ The `cuba-entities` element provides an ability to load list of entities.
         options.offset = this._loadMoreOffset;
         this._setLoading(true);
 
-        return cubaApp.loadEntities(this.entityName, options).then(
+        return this.app.loadEntities(this.entityName, options).then(
           function (data) {
             data.forEach(function (v) {
               this.push('data', v);
@@ -129,7 +130,7 @@ The `cuba-entities` element provides an ability to load list of entities.
       },
 
       loadCount: function() {
-        var loadCountPromise = cubaApp.queryCount(this.entityName, 'all', null);
+        var loadCountPromise = this.app.queryCount(this.entityName, 'all', null);
         loadCountPromise.then(function (count) {
           this._setCount(parseInt(count));
         }.bind(this));
@@ -138,7 +139,7 @@ The `cuba-entities` element provides an ability to load list of entities.
 
       _load: function () {
         this._loadMoreOffset = null;
-        return cubaApp.loadEntities(this.entityName, this._getOptions());
+        return this.app.loadEntities(this.entityName, this._getOptions());
       },
 
       _getOptions: function () {
