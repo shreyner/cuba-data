@@ -57,6 +57,9 @@
         this.debounce('loading', function() {
           this._setLoading(true);
           this.loadRequest = this._load();
+          if (!this.loadRequest) {
+            return;
+          }
           this.loadRequest.then(
             function(data) {
               this._setLoading(false);
