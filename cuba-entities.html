@@ -90,6 +90,9 @@ The `cuba-entities` element provides an ability to load list of entities.
           if (!this.data || !Array.isArray(this.data)) {
             return;
           }
+          if (this.provideCount) {
+            this.loadCount();
+          }
           for (var i = 0; i < this.data.length; i++) {
             if (this.data[i].id === entity.id) {
               this.splice("data", i, 1);

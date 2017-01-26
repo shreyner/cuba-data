@@ -66,6 +66,9 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
           if (!this.data || !Array.isArray(this.data)) {
             return;
           }
+          if (this.provideCount) {
+            this.loadCount();
+          }
           for (var i = 0; i < this.data.length; i++) {
             if (this.data[i].id === entity.id) {
               this.splice("data", i, 1);
