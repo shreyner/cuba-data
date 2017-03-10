@@ -154,8 +154,8 @@ The `cuba-entities` element provides an ability to load list of entities.
         return opts;
       },
 
-      _countOptionsChanged: function(entityName, auto, provideCount) {
-        if (auto && provideCount) {
+      _countOptionsChanged: function() {
+        if (this.auto && this.provideCount) {
           this.loadCount();
         }
       }

@@ -122,8 +122,8 @@ See https://doc.cuba-platform.com/manual-latest/rest_api_v2_queries_config.html
         return this.app.query(this.entityName, this.queryName, this.params);
       },
 
-      _countOptionsChanged: function(entityName, queryName, params, auto, provideCount) {
-        if (auto && provideCount) {
+      _countOptionsChanged: function() {
+        if (this.auto && this.provideCount) {
           this.loadCount();
         }
       }
