@@ -4,7 +4,7 @@
   "main": "cuba-data.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.7.0",
-    "cuba-app": "cuba-elements/cuba-app#^0.2.0"
+    "cuba-app": "shreyner/cuba-app#^0.3.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
