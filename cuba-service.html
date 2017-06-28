@@ -26,6 +26,12 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
       properties: {
         serviceName: String,
         method: String,
+        settings: {
+          type: Object,
+          value: function () {
+            return {}
+          }
+        },
         params: {
           type: Object,
           value: function() {
@@ -44,9 +50,16 @@ The service should be [exposed](https://doc.cuba-platform.com/manual-latest/rest
       observers: ['_optionsChanged(app, serviceName, method, handleAs, params.*, auto)'],
 
       _load: function() {
-        return this.app.invokeService(this.serviceName, this.method, this.params, {
+
+        var settingsFetch = {
           handleAs: this.handleAs
-        });
+        };
+
+        if(this.settings.credentials){
+          settingsFetch.credentials = this.settings.credentials;
+        }
+
+        return this.app.invokeService(this.serviceName, this.method, this.params, settingsFetch);
       }
     });
   </script>
